@@ -270,12 +270,12 @@ int counter_right = 0;
 int counter_stop;
 
 void robotAutoMotorMove(struct Robot * robot, int front_left_sensor, int front_right_sensor) {
-    //int change_sensor, ime_forward, last_left, last_right;
 
+    // after every 6 frames that the robot could go straight forward smoothly, turn right to check the place of nearest wall on the right side
     if (counter == 6){
         counter = 0;
         robot->direction = RIGHT;
-        counter_right ++;
+        counter_right ++; // count how many times the robot turn right and check
     }
 
     if (counter_right == 3){
@@ -284,16 +284,12 @@ void robotAutoMotorMove(struct Robot * robot, int front_left_sensor, int front_r
     }
 
     if ((front_left_sensor == 0) && (front_right_sensor == 0)) {
-        if (robot->currentSpeed<5)
+        if (robot->currentSpeed<4)
             robot->direction = UP;
-            counter ++;
+            counter ++; // count how many frames the robot could go straight forward
     }
     else if ((robot->currentSpeed>0) && ((front_left_sensor >= 1) || (front_right_sensor >= 1)) ) {
-        robot->direction = DOWN;
-    }
-
-    else if (front_left_sensor > front_right_sensor) {
-        robot->direction = RIGHT;
+        robot->direction = DOWN; // once the robot is very close to the wall, slow down
     }
 
     else if ((front_left_sensor >= 1) && (front_left_sensor >=front_right_sensor)) {
@@ -307,19 +303,18 @@ void robotAutoMotorMove(struct Robot * robot, int front_left_sensor, int front_r
     }
 
     else if (front_left_sensor > front_right_sensor) {
-        robot->direction = RIGHT;
+        robot->direction = RIGHT; // when the robot is closer to the left wall, turn right
     }
 
-
     else if (front_left_sensor < front_right_sensor) {
-        robot->direction = LEFT;
+        robot->direction = LEFT; // when the robot is closer to the right wall, turn left
     }
 
     if (robot->currentSpeed == 0){
-        counter_stop ++;
+        counter_stop ++; // count how many frames the robot is static
     }
 
-   if (counter_stop >= 20){
+   if (counter_stop >= 25){ // after 50 frames the robot cannot move, U turn
         robot->direction = LEFT;
         if ((front_left_sensor == 0) && (front_right_sensor == 0)) {
             counter_stop = 0;
