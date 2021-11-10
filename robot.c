@@ -272,7 +272,7 @@ int counter_stop;
 void robotAutoMotorMove(struct Robot * robot, int front_left_sensor, int front_right_sensor) {
 
     // after every 6 frames that the robot could go straight forward smoothly, turn right to check the place of nearest wall on the right side
-    if (counter == 6){
+    if (counter == 4){
         counter = 0;
         robot->direction = RIGHT;
         counter_right ++; // count how many times the robot turn right and check
@@ -284,20 +284,20 @@ void robotAutoMotorMove(struct Robot * robot, int front_left_sensor, int front_r
     }
 
     if ((front_left_sensor == 0) && (front_right_sensor == 0)) {
-        if (robot->currentSpeed<4)
+        if (robot->currentSpeed<3)
             robot->direction = UP;
             counter ++; // count how many frames the robot could go straight forward
     }
-    else if ((robot->currentSpeed>0) && ((front_left_sensor >= 1) || (front_right_sensor >= 1)) ) {
+    else if ((robot->currentSpeed>0) && ((front_left_sensor >= 2) || (front_right_sensor >= 2)) ) {
         robot->direction = DOWN; // once the robot is very close to the wall, slow down
     }
 
-    else if ((front_left_sensor >= 1) && (front_left_sensor >=front_right_sensor)) {
+    else if ((front_left_sensor >= 2) && (front_left_sensor >=front_right_sensor)) {
         robot->direction = RIGHT;
 
     }
 
-    else if ((front_right_sensor >= 1) && (front_left_sensor < front_right_sensor)){
+    else if ((front_right_sensor >= 2) && (front_left_sensor < front_right_sensor)){
         robot->direction = LEFT;
 
     }
@@ -314,11 +314,16 @@ void robotAutoMotorMove(struct Robot * robot, int front_left_sensor, int front_r
         counter_stop ++; // count how many frames the robot is static
     }
 
-   if (counter_stop >= 25){ // after 50 frames the robot cannot move, U turn
-        robot->direction = LEFT;
-        if ((front_left_sensor == 0) && (front_right_sensor == 0)) {
+   if (counter_stop >= 5){ // after 5 frames the robot cannot move, U turn
+        if ((front_left_sensor == 0) || (front_right_sensor == 0)) {
             counter_stop = 0;
 
+        }
+        else{
+            robot->direction = LEFT;
+            if ((front_left_sensor == 0) && (front_right_sensor == 0)) {
+                counter_stop = 0;
+            }
         }
     }
 }
