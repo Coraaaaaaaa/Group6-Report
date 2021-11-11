@@ -271,7 +271,7 @@ int counter_stop;
 
 void robotAutoMotorMove(struct Robot * robot, int front_left_sensor, int front_right_sensor) {
 
-    // after every 6 frames that the robot could go straight forward smoothly, turn right to check the place of nearest wall on the right side
+    // after every 4 frames that the robot could go straight forward smoothly, turn right to check the place of nearest wall on the right side
     if (counter == 4){
         counter = 0;
         robot->direction = RIGHT;
